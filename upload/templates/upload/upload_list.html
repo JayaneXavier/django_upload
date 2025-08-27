@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Uploads</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { max-width: 800px; margin: 40px auto; font-family: system-ui, Arial; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+    a { color: #4f46e5; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>Arquivos enviados</h1>
+  <p><a href="/">Enviar outro</a></p>
+  <table>
+    <thead><tr><th>Arquivo</th><th>Enviado em</th></tr></thead>
+    <tbody>
+      {% for d in documents %}
+      <tr>
+        <td><a href="{{ d.file.url }}" target="_blank" rel="noopener">{{ d.file.name }}</a></td>
+        <td>{{ d.uploaded_at }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="2">Ainda não há arquivos.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
