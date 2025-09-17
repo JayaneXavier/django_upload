@@ -1,36 +1,82 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:16-alpine
     env_file: .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my_overlay_network
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
 
-  web:
-    build:
-      context: .                        
-      dockerfile: docker/web/Dockerfile 
+  backend:
+    image: django-upload:latest
     env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://upload_user:supersecret@db:5432/upload_db
     depends_on:
       - db
-    expose:
-      - "8000"
     volumes:
       - media_volume:/app/media
       - static_volume:/app/staticfiles
+    networks:
+      - my_overlay_network
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+      restart_policy:
+        condition: on-failure
 
-  nginx:
-    build:
-      context: .                     
-      dockerfile: docker/nginx/Dockerfile
+  frontend:
+    image: django-upload-nginx:latest
     depends_on:
-      - web
+      - backend
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - static_volume:/vol/static
       - media_volume:/vol/media
+    networks:
+      - my_overlay_network
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - my_overlay_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  portainer_data:
+
+networks:
+  my_overlay_network:
+    external: true

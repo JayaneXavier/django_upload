@@ -10,5 +10,5 @@ done
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
-# inicia gunicorn
-exec gunicorn config.wsgi:application --config gunicorn.conf.py
+# inicia gunicorn, garantindo que ele aceite conexões externas (de outros containers)
+exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
