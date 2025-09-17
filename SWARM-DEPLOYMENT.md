@@ -113,9 +113,11 @@ FOR /L %i IN (1,1,10) DO curl -s http://localhost:8080/frontend-info/
 
 # Backend  
 for i in {1..10}; do curl -s http://localhost:8080/api/backend-info/ | jq '.backend_container_id'; done
-```
+
 FOR /L %i IN (1,1,10) DO curl -s http://localhost:8080/api/backend-info/
+
 FOR /L %i IN (1,1,10) DO curl -s http://localhost:8080/frontend-info/
+```
 
 
 ### 3. Teste de Comunicação Interna
