@@ -64,7 +64,7 @@ docker swarm init
 
 ```bash
 # Cria rede para comunicação entre serviços
-docker network create --driver overlay --attachable app_network
+docker network create --driver overlay --attachable my_overlay_network
 ```
 
 ### 3. Deploy da Stack
